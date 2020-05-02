@@ -9,33 +9,24 @@ and GitOps activities.
 A stack contains the following information with respect to an application 
 that is associated with a stack:
 
-* How to turn the application into a container(s)
-* How to run the application
-* How to run tests
-* How to debug the application
-* How to deploy the application
-* Pipeline(s)
-* Sample application(s)
+* Sample application(s). For example, https://github.com/snowdrop/spring-boot-http-booster
+* How to compile the application. For example, `mvn package`
+* How to run the application. Example, For example, `java -cp target/my-app-1.0-SNAPSHOT.jar com.mycompany.app.App`
+* How to turn the application into a container(s) . For Example, a Kaniko Build using a Dockerfile.
+* How to debug the application.
+* How to deploy the application. For example, a Knative Service using a specific pod template
+* Sample CI/CD Pipeline(s)
 
 
 #### How does one define a stack ?
 
-A stack author defines a stack by specifying the following information in a manifest expresseded 
-as a `devfile.yaml` file.
-
-* Metadata for setting up a container-based developer workspace for developing an app with the 
-specific stack.
-* Commands for compiling the app in a container in the developer workspace. 
-Example, `mvn package`.
-* Commands for running the app in a container in the developer workspace. 
-Example, `java -cp target/my-app-1.0-SNAPSHOT.jar com.mycompany.app.App` 
-* Guidance for building an image from the app's source code.
-* Guidance for deploying the above image as a container on Kubernetes.
+A stack author defines a stack by specifying the aforementioned metadata in a manifest called 
+a Devfile.
 
 
-### Sections in a stack's devfile
+### Contents of a stack's Devfile
 
-#### Project Samples
+#### Sample application(s)
 
 ```
 projects:
@@ -45,18 +36,44 @@ projects:
       branch: master
 ```
 
-#### Command(s) for running the app in a workspace
+#### Guidance on compiling the application
 
 ```
 commands:
   - exec:
-      id: run
+      id: build 
       component: maven
-      commandLine: 'mvn -Duser.home=${HOME} spring-boot:run'
+      commandLine: mvn -Duser.home=${HOME} -DskipTests clean install
       workingDir: '${PROJECTS_ROOT}/spring-boot-http-booster'
       env:
         - name: MAVEN_OPTS
           value: "-Xmx200m"
 ```
 
+#### Guidance on runnning the application
 
+```
+commands:
+  - exec:
+        id: run
+        component: maven
+        commandLine: 'mvn -Duser.home=${HOME} spring-boot:run'
+        workingDir: '${PROJECTS_ROOT}/spring-boot-http-booster'
+        env:
+          - name: MAVEN_OPTS
+            value: "-Xmx200m"
+```
+
+
+#### Guidance on building an image
+
+_To Be Added_
+
+   
+#### Guidance on deploying the image
+
+_To Be Added_
+
+#### Guidance on a CI/CD pipeline
+
+_To Be Added_
