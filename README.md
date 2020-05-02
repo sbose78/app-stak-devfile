@@ -65,7 +65,27 @@ commands:
             value: "-Xmx200m"
 ```
 
-#### Guidance on deploying the image
+#### Guidance on building Image(s)
+
+The stack author may specify one of more strategies to build images
+from the application source code. 
+
+```
+images:
+  - strategy:
+      name: buildpacks-v3 
+    builder:
+      image: heroku/buildpacks:18
+
+  - source:
+      context: src/frontend
+    strategy:
+      name: kaniko
+    Dockerfile: build/Dockerfile.build
+```
+
+
+#### Guidance on deploying the Image
 
 ##### Deploying as a specific workload
 

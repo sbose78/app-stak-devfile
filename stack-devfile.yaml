@@ -39,52 +39,6 @@ components:
       name: m2
       size: 2G
 
-deploy:
-
-  # Option 1
-  workload:
-      apiVersion: serving.knative.dev/v1
-      Kind: Service
-
-  # Option 2.
-  # This could be coupled with Option 1.
-  containers:
-    - image: gcr.io/knative-samples/helloworld-go
-      env:
-        - name: TARGET
-          value: "Go Sample v1"
-
-  # Option 3.
-  # Cannot be coupled with any other option.
-  chart:
-    url: https://technosophos.github.io/tscharts/mink-0.1.0.tgz
-    values:
-      - name: license
-        value: true 
-      - name: REPLACE_IMAGE 
-        value: quay.io/myorg/myapp:0.1 # This will be overriden by the stack consumer
-
-  # Option 4.
-  # Cannot be coupled with any other option.
-  raw:
-    - manifest: deploy/manifests # Path or a URL
-    - resources:
-      - apiVersion: serving.knative.dev/v1
-        kind: Service
-        metadata:
-          name: helloworld-go
-          namespace: will-be-overwritten
-          annotations:
-            apps.devfile.io/workload-type: function
-        spec:
-          template:
-            spec:
-            containers:
-              - image: gcr.io/knative-samples/helloworld-go
-                env:
-                  - name: TARGET
-                    value: "Go Sample v1" 
-
 commands:
   - exec:
       id: build 
@@ -144,3 +98,61 @@ commands:
       component: maven
       commandLine: 'mvn fabric8:deploy -Popenshift -DskipTests'
       workingDir: '${PROJECTS_ROOT}/spring-boot-http-booster'
+
+images:
+  - strategy:
+      name: buildpacks-v3 
+    builder:
+      image: heroku/buildpacks:18
+
+  - source:
+      context: src/frontend
+    strategy:
+      name: kaniko
+    Dockerfile: build/Dockerfile.build
+
+deploy:
+
+  # Option 1
+  workload:
+      apiVersion: serving.knative.dev/v1
+      Kind: Service
+
+  # Option 2.
+  # This could be coupled with Option 1.
+  containers:
+    - image: gcr.io/knative-samples/helloworld-go
+      env:
+        - name: TARGET
+          value: "Go Sample v1"
+
+  # Option 3.
+  # Cannot be coupled with any other option.
+  chart:
+    url: https://technosophos.github.io/tscharts/mink-0.1.0.tgz
+    values:
+      - name: license
+        value: true 
+      - name: REPLACE_IMAGE 
+        value: quay.io/myorg/myapp:0.1 # This will be overriden by the stack consumer
+
+  # Option 4.
+  # Cannot be coupled with any other option.
+  raw:
+    - manifest: deploy/manifests # Path or a URL
+    - resources:
+      - apiVersion: serving.knative.dev/v1
+        kind: Service
+        metadata:
+          name: helloworld-go
+          namespace: will-be-overwritten
+          annotations:
+            apps.devfile.io/workload-type: function
+        spec:
+          template:
+            spec:
+            containers:
+              - image: gcr.io/knative-samples/helloworld-go
+                env:
+                  - name: TARGET
+                    value: "Go Sample v1"
