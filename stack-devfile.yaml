@@ -41,71 +41,50 @@ components:
 
 deploy:
 
-  # Optional.
-  # The stack author may specify the recommended type of the workload. 
-  #
-  # Semantically, this is consumed only with the podSpec.
-  # However, this field could be used to "decorate" the stack with metadata on 
-  # the type of workload being used.
+  # Option 1
   workload:
       apiVersion: serving.knative.dev/v1
       Kind: Service
-   
-  # podSpec: The stack author may specify the podSpec  
-  # that could be used to deploy the multi-service stack.
-  # Could be used with a DeploymentConfig, Deployment or a Knative Service ( function? )
-  podSpec:
-    containers:
+
+  # Option 2.
+  # This could be coupled with Option 1.
+  containers:
     - image: gcr.io/knative-samples/helloworld-go
       env:
         - name: TARGET
           value: "Go Sample v1"
 
-
-  # chart: The stack author may specify the helm chart that could
-  # be used to deploy the stack.
-  # The chart *must have a variable to let the chart consumer
-  # inject the built image url.
+  # Option 3.
+  # Cannot be coupled with any other option.
   chart:
     url: https://technosophos.github.io/tscharts/mink-0.1.0.tgz
-
-    # "imageVar" lets the stack author convey to the stack consumer 
-    # which variable to set as the built image's url. 
-    imageVar: REPLACE_IMAGE
     values:
       - name: license
         value: true 
       - name: REPLACE_IMAGE 
         value: quay.io/myorg/myapp:0.1 # This will be overriden by the stack consumer
 
-    
-  # resource: The stack author may specify the list of Kubernetes objects to 
-  # deploy the stack either 
-  # - as a list of objects OR 
-  # - as a url to the raw yaml OR
-  # - as a path to the directory in the repository
-  resource:
-    # optional
-    url: https://raw.githubusercontent.com/fabric8-services/fabric8-wit/master/openshift/core.app.yaml
+  # Option 4.
+  # Cannot be coupled with any other option.
+  raw:
+    - manifest: deploy/manifests # Path or a URL
+    - resources:
+      - apiVersion: serving.knative.dev/v1
+        kind: Service
+        metadata:
+          name: helloworld-go
+          namespace: will-be-overwritten
+          annotations:
+            apps.devfile.io/workload-type: function
+        spec:
+          template:
+            spec:
+            containers:
+              - image: gcr.io/knative-samples/helloworld-go
+                env:
+                  - name: TARGET
+                    value: "Go Sample v1" 
 
-    # optional
-    objects:
-    - apiVersion: serving.knative.dev/v1
-      kind: Service
-      metadata:
-        name: helloworld-go
-        namespace: will-be-overwritten
-        annotations:
-          apps.devfile.io/workload-type: function
-      spec:
-        template:
-          spec:
-          containers:
-            - image: gcr.io/knative-samples/helloworld-go
-              env:
-                - name: TARGET
-                  value: "Go Sample v1"
- 
 commands:
   - exec:
       id: build 
