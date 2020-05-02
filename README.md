@@ -73,9 +73,9 @@ from the application source code.
 ```
 images:
   - strategy:
-      name: buildpacks-v3 
+      name: source-to-image
     builder:
-      image: heroku/buildpacks:18
+      image: openshift/java8
 
   - source:
       context: src/frontend
@@ -84,6 +84,7 @@ images:
     Dockerfile: build/Dockerfile.build
 ```
 
+Tools using the devfile as a guidance may implement flows to optionally resolve `builder.image` to imagestreams.
 
 #### Guidance on deploying the Image
 
@@ -109,10 +110,10 @@ environment.
 ```
 deploy:
   containers:
-    - image: gcr.io/knative-samples/helloworld-go
+    - image: ${DEPLOY_IMAGE}
       env:
         - name: TARGET
-          value: "Go Sample v1"
+          value: "Springboot Sample v1"
 ```
 
 ##### Deploying from a helm chart
@@ -127,7 +128,7 @@ deploy:
       - name: license
         value: true 
       - name: REPLACE_IMAGE 
-        value: quay.io/myorg/myapp:0.1 # should be overriden
+        value: ${DEPLOY_IMAGE}
 ```
 
 ##### Deploying using a list of Kubernetes resources
@@ -138,12 +139,16 @@ associated with the stack.
 ```
 deploy:
   raw:
-    - manifest: deploy/manifests # Path or URL.
-    - resources:
+  - resources:
+    - objects: []
+      manifests: 
+      - .openshiftio/application.yaml # Optional Path or a URL
+    - manifests: []
+      objects:
       - apiVersion: serving.knative.dev/v1
         kind: Service
         metadata:
-          name: helloworld-go
+          name: helloworld-springboot
           namespace: will-be-overwritten
           annotations:
             apps.devfile.io/workload-type: function
@@ -151,10 +156,10 @@ deploy:
           template:
             spec:
             containers:
-              - image: gcr.io/knative-samples/helloworld-go
+              - image: ${DEPLOY_IMAGE}
                 env:
                   - name: TARGET
-                    value: "Go Sample v1"
+                    value: "springboot Sample v1"
         
 ```
 

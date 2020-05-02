@@ -101,9 +101,9 @@ commands:
 
 images:
   - strategy:
-      name: buildpacks-v3 
+      name: source-to-image 
     builder:
-      image: heroku/buildpacks:18
+      image: openshift/java8
 
   - source:
       context: src/frontend
@@ -113,6 +113,10 @@ images:
 
 deploy:
 
+  paramaters:
+  - name: DEPLOY_IMAGE
+    value: quay.io/myorg/myrepo
+
   # Option 1
   workload:
       apiVersion: serving.knative.dev/v1
@@ -121,10 +125,10 @@ deploy:
   # Option 2.
   # This could be coupled with Option 1.
   containers:
-    - image: gcr.io/knative-samples/helloworld-go
+    - image: ${DEPLOY_IMAGE}"
       env:
         - name: TARGET
-          value: "Go Sample v1"
+          value: "Springboot Sample v1"
 
   # Option 3.
   # Cannot be coupled with any other option.
@@ -134,25 +138,29 @@ deploy:
       - name: license
         value: true 
       - name: REPLACE_IMAGE 
-        value: quay.io/myorg/myapp:0.1 # This will be overriden by the stack consumer
+        value: ${DEPLOY_IMAGE}
 
   # Option 4.
   # Cannot be coupled with any other option.
   raw:
-    - manifest: deploy/manifests # Path or a URL
     - resources:
-      - apiVersion: serving.knative.dev/v1
-        kind: Service
-        metadata:
-          name: helloworld-go
-          namespace: will-be-overwritten
-          annotations:
-            apps.devfile.io/workload-type: function
-        spec:
-          template:
-            spec:
-            containers:
-              - image: gcr.io/knative-samples/helloworld-go
-                env:
-                  - name: TARGET
-                    value: "Go Sample v1"
+      - objects: []
+        manifests: 
+        - .openshiftio/application.yaml # Optional Path or a URL
+      - manifests: []
+        objects:
+        - apiVersion: serving.knative.dev/v1
+          kind: Service
+          metadata:
+            name: helloworld-springboot
+            namespace: will-be-overwritten
+            annotations:
+              apps.devfile.io/workload-type: function
+          spec:
+            template:
+              spec:
+              containers:
+                - image: ${DEPLOY_IMAGE}
+                  env:
+                    - name: TARGET
+                      value: "springboot Sample v1"
