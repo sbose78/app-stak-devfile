@@ -59,4 +59,89 @@ commands:
           value: "-Xmx200m"
 ```
 
+#### Guidance on building an image 
+
+```
+build:
+  strategy:
+    name: buildpacks-v3 
+  builder:
+    image: heroku/buildpacks:18
+```
+   
+#### Guidance on deploying the image
+
+##### Deploying from a podSpec
+
+```
+deploy:
+
+  workload:
+      apiVersion: serving.knative.dev/v1
+      Kind: Service   
+  podSpec:
+    containers:
+    - image: gcr.io/knative-samples/helloworld-go
+      env:
+        - name: TARGET
+          value: "Go Sample v1"
+```
+
+##### Deploying from a helm chart
+
+The stack author may specify the helm chart that could be used to deploy the stack.
+The chart must have a variable to let the chart consumer inject the built image url.
+
+`imageVar` lets the stack author convey to the stack consumer which helm template variable 
+is to be set as the built image's url.
+
+```
+deploy:
+
+  chart:
+    url: https://technosophos.github.io/tscharts/mink-0.1.0.tgz
+    imageVar: REPLACE_IMAGE
+    values:
+      - name: license
+        value: true 
+      - name: REPLACE_IMAGE 
+        value: quay.io/myorg/myapp:0.1 # This will be overriden by the stack consumer
+```
+
+##### Deploying using a list of Kubernetes resources
+
+The stack author may specify the list of Kubernetes objects to deploy the stack either 
+* as a list of objects OR 
+* as a url to the raw yaml OR
+* as a path to the directory in the repository.
+
+```
+deploy:
+
+  resource:
+  
+    # option 1
+    url: https://raw.githubusercontent.com/fabric8-services/fabric8-wit/master/openshift/core.app.yaml
+
+    # option 2
+    objects:
+    - apiVersion: serving.knative.dev/v1
+      kind: Service
+      metadata:
+        name: helloworld-go
+        namespace: will-be-overwritten
+        annotations:
+          apps.devfile.io/workload-type: function
+      spec:
+        template:
+          spec:
+          containers:
+            - image: gcr.io/knative-samples/helloworld-go
+              env:
+                - name: TARGET
+                  value: "Go Sample v1"
+        
+    # option 3
+    path: deploy 
+```
 
