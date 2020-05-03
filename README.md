@@ -131,10 +131,6 @@ deploy:
         values:
           - name: license
             value: true 
-
-            # TODO: How does stack author specify which values.yaml param 
-            # have the name of the image to be used.
-
           - name: REPLACE_IMAGE 
             value: ${imageRef} 
 ```
