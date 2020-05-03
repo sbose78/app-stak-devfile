@@ -72,7 +72,8 @@ from the application source code.
 
 ```
 images:
-  - strategy:
+  - name: hello-world
+    strategy:
       name: source-to-image
     builder:
       image: openshift/java8
@@ -81,39 +82,39 @@ images:
       context: src/frontend
     strategy:
       name: kaniko
-    Dockerfile: build/Dockerfile.build
+    Dockerfile: ${STACK_ROOT}/build/Dockerfile.build
 ```
 
 Tools using the devfile as a guidance may implement flows to optionally resolve `builder.image` to imagestreams.
 
 #### Guidance on deploying the Image
 
-##### Deploying as a specific workload
+##### Deploying as a specific workload with optional podSpec guidance
 
-The stack author may specify the workload type the app needs to be deployed as
+The stack author may specify the workload type and the containers' spec ( "pod spec" )
+the app component needs to be deployed as.
 
-```
-deploy:
-  workload:
-      apiVersion: serving.knative.dev/v1
-      Kind: Service
-```
-
-##### Deploying using a podSpec
-
-The stack author may specify the pod template the app needs to be deployed as. 
-
-The pod template may be used along with the `workload`. When not specified, the app is deployed as a `Deployment` in a Kubernetes cluster or as a Docker container in a local dev 
-environment.
-
+A 'component' is a Kubernetes workload associated with one of the images built off source
+in this current stack.
 
 ```
 deploy:
-  containers:
-    - image: ${DEPLOY_IMAGE}
-      env:
-        - name: TARGET
-          value: "Springboot Sample v1"
+  components:
+    - description: Deploys the image hello-world
+      imageRef : hello-world
+      workloads: 
+          # guidance on the workload type
+        - type:  
+            apiVersion: apps/v1
+            kind: Deployment
+
+          # guidance on podspec
+          containers:
+            readinessProbe:
+              httpGet:
+              path: /api/health/readiness
+              port: 8080
+              scheme: HTTP 
 ```
 
 ##### Deploying from a helm chart
@@ -122,13 +123,20 @@ The stack author may specify the helm chart that could be used to deploy the sta
 
 ```
 deploy:
-  chart:
-    url: https://technosophos.github.io/tscharts/mink-0.1.0.tgz
-    values:
-      - name: license
-        value: true 
-      - name: REPLACE_IMAGE 
-        value: ${DEPLOY_IMAGE}
+  components:
+    - description: Deploys the image hello-world
+      imageRef : hello-world
+      chart:
+        url: https://technosophos.github.io/tscharts/mink-0.1.0.tgz
+        values:
+          - name: license
+            value: true 
+
+            # TODO: How does stack author specify which values.yaml param 
+            # have the name of the image to be used.
+
+          - name: REPLACE_IMAGE 
+            value: ${imageRef} 
 ```
 
 ##### Deploying using a list of Kubernetes resources
@@ -138,29 +146,39 @@ associated with the stack.
 
 ```
 deploy:
-  raw:
-  - resources:
-    - objects: []
-      manifests: 
-      - .openshiftio/application.yaml # Optional Path or a URL
-    - manifests: []
+  components:
+    - description
       objects:
-      - apiVersion: serving.knative.dev/v1
-        kind: Service
-        metadata:
-          name: helloworld-springboot
-          namespace: will-be-overwritten
-          annotations:
-            apps.devfile.io/workload-type: function
-        spec:
-          template:
-            spec:
-            containers:
-              - image: ${DEPLOY_IMAGE}
-                env:
-                  - name: TARGET
-                    value: "springboot Sample v1"
+        - apiVersion: serving.knative.dev/v1
+          kind: Service
+          metadata:
+            name: helloworld-springboot
+            namespace: will-be-overwritten
+            annotations:
+              apps.devfile.io/workload-type: function
+          spec:
+            template:
+              spec:
+              containers:
+                - image: ${DEPLOY_IMAGE}
+                  env:
+                    - name: TARGET
+                      value: "springboot Sample v1"
         
+```
+
+##### Deploying using a 'yaml' manifest
+
+```
+deploy:
+  dependencies:
+    # The node app's service dependencies
+    - description: Mongo DB deployment
+      manifests: 
+        - ${STACK_ROOT}/dependencies/postgres.yaml
+      objects: []
+      workloads: []
+      chart: []
 ```
 
 

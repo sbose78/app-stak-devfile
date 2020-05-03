@@ -87,7 +87,7 @@ commands:
           value: "-Xmx200m"
 
 images:
-  - name: name-service
+  - name: first-backing-service
     source:
       context: name-service
     strategy:
@@ -105,7 +105,7 @@ images:
       - name: ARTIFACT_COPY_ARGS
         value: '*.jar'
 
-  - name: greetings-service
+  - name: second-backing-service
     source:
       context: greetings-service
     strategy:
@@ -124,11 +124,20 @@ images:
         value: '*.jar'
 
 deploy:
-  raw:
-    - description: ConfigMap to make one service connect to another.
-      manifest: https://raw.githubusercontent.com/sbose78/fuse-springboot-circuit-breaker-booster/app-stak/greetings-service/deploy/config.yaml
-    - manifest: https://raw.githubusercontent.com/sbose78/fuse-springboot-circuit-breaker-booster/app-stak/greetings-service/deploy/deploy.yaml
-    - manifest: https://raw.githubusercontent.com/sbose78/fuse-springboot-circuit-breaker-booster/app-stak/name-service/deploy/deploy.yaml
+  components:
+    - description: ConfigMap to enable one service connect to another.
+      manifests: 
+        - https://raw.githubusercontent.com/sbose78/fuse-springboot-circuit-breaker-booster/app-stak/greetings-service/deploy/config.yaml
+    
+    - description: The first backend service
+      imageRef: greetings-service
+      manifests: 
+        - https://raw.githubusercontent.com/sbose78/fuse-springboot-circuit-breaker-booster/app-stak/greetings-service/deploy/deploy.yaml
+    
+    - description: The second backing service
+      imageRef: name-service
+      manifests: 
+        - https://raw.githubusercontent.com/sbose78/fuse-springboot-circuit-breaker-booster/app-stak/name-service/deploy/deploy.yaml
 
     
       

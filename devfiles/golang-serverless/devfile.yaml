@@ -25,12 +25,18 @@ commands:
       workingDir: '${PROJECTS_ROOT}/go-function'
 
 images:
-  - name: go-function
+  - name: golang-app
     strategy:
       name: Kaniko
-    Dockerfile: Dockerfile
+    Dockerfile: https://raw.githubusercontent.com/sbose78/golang-function/master/Dockerfile
 
 deploy:
-  workload:
-    apiVersion: serving.knative.dev/v1
-    Kind: Service
+  components:
+    - description: Golang App built from source deployed as a 'function'.
+      imageRef: golang-app
+      objects: []
+      manifests: []
+      workloads:
+        - type:
+            apiVersion: serving.knative.dev/v1
+            Kind: Service
