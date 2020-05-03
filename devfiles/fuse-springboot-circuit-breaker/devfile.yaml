@@ -94,6 +94,14 @@
         name: source-to-image
       builder:
         image: fabric8/s2i-java:latest
+      parameters:
+        - name: MAVEN_ARGS_APPEND
+          value: "-pl ."
+        - name: ARTIFACT_DIR
+          value: "./target"
+        - name: MAVEN_MIRROR_URL
+        - name: ARTIFACT_COPY_ARGS
+          value: '*.jar'
 
     - name: greetings-service
       source:
@@ -102,6 +110,14 @@
         name: source-to-image
       builder:
         image: fabric8/s2i-java:latest
+      paramters:
+        - name: MAVEN_ARGS_APPEND
+          value: '-pl .'
+        - name: ARTIFACT_DIR
+          value: './target'
+        - name: MAVEN_MIRROR_URL
+        - name: ARTIFACT_COPY_ARGS
+          value: '*.jar'
 
   deploy:
 
