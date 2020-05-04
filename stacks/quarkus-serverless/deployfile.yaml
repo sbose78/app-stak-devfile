@@ -1,0 +1,13 @@
+schemaVersion: 0.0.1
+images:
+  - name: quarkus-app
+    strategy:
+      name: Kaniko
+    Dockerfile: ${STACK_ROOT}/build/Dockerfile.jvm
+
+workloads:
+  components:
+    - imageRef: quarkus-app
+      type:
+        apiVersion: serving.knative.dev/v1
+        kind: Service

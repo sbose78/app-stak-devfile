@@ -46,15 +46,3 @@ commands:
         component: maven
         command: "mvn clean install"
         workdir: ${PROJECTS_ROOT}
-
-images:
-  - name: quarkus-app
-    strategy:
-      name: Kaniko
-    Dockerfile: ${STACK_ROOT}/build/Dockerfile.jvm
-
-workloads:
-  components:
-    - type:
-        apiVersion: serving.knative.dev/v1
-        kind: Service

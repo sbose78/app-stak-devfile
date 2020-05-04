@@ -1,3 +1,9 @@
 ## NodeJS with PostgreSQL CRUD Stack
 
-As specified in the meta.yaml, the stack definition lives in https://github.com/sbose78/nodejs-postgresql-stack/blob/master/devfile.yaml
+
+### Inner loop
+The stack's inner loop guidance lives in https://github.com/sbose78/nodejs-postgresql-stack/blob/master/devfile.yaml
+
+
+### Outer loop
+The stack's outer loop guidance lives in https://github.com/sbose78/nodejs-postgresql-stack/blob/master/deployfile.yaml

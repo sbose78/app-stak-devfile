@@ -28,50 +28,17 @@ that is associated with a stack:
 
 ### How does one define a stack ?
 
-A stack author defines a stack by specifying the aforementioned metadata in a manifest called 
-a Devfile.
+
+#### Inner-loop
+A stack author defines the inner-loop guidance in a stack by specifying the aforementioned metadata in a manifest called a **Devfile**.
+
+#### Outer-loop
+A stack author defines the outer-loop guidance in a stack by specifying the aforementioned metadata in a manifest called a **DeployFile**.
 
 
-### Contents of a stack's Devfile
+### Contents of a stack's DeployFile
 
-#### Sample application(s)
-
-```
-projects:
-  - name: spring-boot-http-booster
-    git:
-      location: https://github.com/snowdrop/spring-boot-http-booster
-      branch: master
-```
-
-#### Guidance on compiling the application
-
-```
-commands:
-  - exec:
-      id: build 
-      component: maven
-      commandLine: mvn -Duser.home=${HOME} -DskipTests clean install
-      workingDir: '${PROJECTS_ROOT}/spring-boot-http-booster'
-      env:
-        - name: MAVEN_OPTS
-          value: "-Xmx200m"
-```
-
-
-#### Guidance on runnning the application
-
-```
-commands:
-  - exec:
-        id: run
-        component: maven
-        commandLine: 'mvn -Duser.home=${HOME} spring-boot:run'
-        workingDir: '${PROJECTS_ROOT}/spring-boot-http-booster'
-        env:
-          - name: MAVEN_OPTS
-            value: "-Xmx200m"
-```
+The outer-loop guidance for a stack will be present in the DeployFile.
 
 #### Guidance on building Image(s)
 
@@ -94,7 +61,7 @@ images:
     Dockerfile: ${STACK_ROOT}/build/Dockerfile.build
 ```
 
-Tools using the devfile as a guidance may implement flows to optionally resolve `builder.image` to ImageStreams.
+Tools using the `deployfile.yaml` as a guidance may implement flows to optionally resolve `builder.image` to ImageStreams.
 
 #### Guidance on deploying the Image as Workloads
 
@@ -174,7 +141,7 @@ workloads:
             name: helloworld-springboot
             namespace: will-be-overwritten
             annotations:
-              apps.devfile.io/workload-type: function
+              apps.deployfile.io/workload-type: function
           spec:
             template:
               spec:
@@ -213,5 +180,3 @@ A stack could be inherited by
 1. A stack.
 2. A project.
 
-To accomplish the same, the project/stack's devfile specify the parent stack and 
-the continue to add/overide the relevant stack guidance in the devfile.
