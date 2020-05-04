@@ -78,7 +78,8 @@ images:
     builder:
       image: openshift/java8
 
-  - source:
+  - name: hello-world-ui
+    source:
       context: src/frontend
     strategy:
       name: kaniko
@@ -115,7 +116,7 @@ the app component needs to be deployed as.
 workloads:
   components:
     - description: NodeJS App built from source
-      imageRef : nodejs-crud
+      imageRef : hello-world
       podTemplate:
         containers:
             readinessProbe:
@@ -138,7 +139,7 @@ The stack author may specify the helm chart that could be used to deploy the sta
 workloads:
   components:
     - description: Deploys the image hello-world
-      imageRef : hello-world
+      imageRef : hello-world-ui
       chart:
         url: https://technosophos.github.io/tscharts/mink-0.1.0.tgz
         values:
@@ -157,7 +158,7 @@ associated with the stack.
 workloads:
   components:
     - description: "Deploys the springboot app as a Knative Service"
-      imageRef : accounts-service-image
+      imageRef : hello-world
       objects:
         - apiVersion: serving.knative.dev/v1
           kind: Service
