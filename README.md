@@ -1,10 +1,18 @@
-### What is a stack ?
+## Application Stacks 
+codenamed "AppStaks"
 
-Set of metadata, artifacts and example code needed to develop an application. 
+
+### What is an application stack ?
+
+An application stack is a set of metadata, artifacts and example code needed to develop an application. 
 The scope of AppStaK goes beyond the traditional software stack and covers development 
 and GitOps activities.
 
-#### What information does a stack have ?
+### Who consumes an application stack ?
+
+Developer tools which enables developers to get started with writing applications which would be eventually deployed in a Kubernetes environments, would use Application Stacks to offers users a variety of optioins 
+
+### What information does a stack have ?
 
 A stack contains the following information with respect to an application 
 that is associated with a stack:
@@ -18,7 +26,7 @@ that is associated with a stack:
 * Sample CI/CD Pipeline(s)
 
 
-#### How does one define a stack ?
+### How does one define a stack ?
 
 A stack author defines a stack by specifying the aforementioned metadata in a manifest called 
 a Devfile.
@@ -193,3 +201,7 @@ workloads:
 #### Guidance on a CI/CD pipeline
 
 _To Be Added_
+
+### Samples
+
+Get started with samples stacks in the `/stacks` directory.
