@@ -30,13 +30,12 @@ images:
       name: Kaniko
     Dockerfile: https://raw.githubusercontent.com/sbose78/golang-function/master/Dockerfile
 
-deploy:
+workloads:
   components:
     - description: Golang App built from source deployed as a 'function'.
       imageRef: golang-app
-      objects: []
-      manifests: []
-      workloads:
-        - type:
-            apiVersion: serving.knative.dev/v1
-            Kind: Service
+      type:
+        apiVersion: serving.knative.dev/v1
+        Kind: Service
+      
+      

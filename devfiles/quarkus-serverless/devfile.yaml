@@ -54,7 +54,8 @@ images:
       name: Kaniko
     Dockerfile: getting-started-knative/src/main/docker/Dockerfile.jvm
 
-deploy:
-  workload:
-    apiVersion: serving.knative.dev/v1
-    Kind: Service
+workloads:
+  components:
+    - type:
+        apiVersion: serving.knative.dev/v1
+        kind: Service

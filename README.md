@@ -85,36 +85,49 @@ images:
     Dockerfile: ${STACK_ROOT}/build/Dockerfile.build
 ```
 
-Tools using the devfile as a guidance may implement flows to optionally resolve `builder.image` to imagestreams.
+Tools using the devfile as a guidance may implement flows to optionally resolve `builder.image` to ImageStreams.
 
-#### Guidance on deploying the Image
-
-##### Deploying as a specific workload with optional podSpec guidance
-
-The stack author may specify the workload type and the containers' spec ( "pod spec" )
-the app component needs to be deployed as.
+#### Guidance on deploying the Image as Workloads
 
 A 'component' is a Kubernetes workload associated with one of the images built off source
 in this current stack.
 
-```
-deploy:
-  components:
-    - description: Deploys the image hello-world
-      imageRef : hello-world
-      workloads: 
-          # guidance on the workload type
-        - type:  
-            apiVersion: apps/v1
-            kind: Deployment
+A 'dependency' is a  service that the component depends on. Example, a mongo DB database.
 
-          # guidance on podspec
-          containers:
+##### Guidance on the type of the workload
+
+```
+workloads:
+  components:
+    - type:
+        apiVersion: serving.knative.dev/v1
+        kind: Service
+```
+
+##### Guidance on the pod template
+
+The stack author may specify the workload type and the pod template
+the app component needs to be deployed as.
+
+
+
+```
+workloads:
+  components:
+    - description: NodeJS App built from source
+      imageRef : nodejs-crud
+      podTemplate:
+        containers:
             readinessProbe:
-              httpGet:
+              httpGet: ""
               path: /api/health/readiness
               port: 8080
               scheme: HTTP 
+            livenessProbe:
+              httpGet: ""
+              path: /api/health/liveness
+              port: 8080
+              scheme: HTTP
 ```
 
 ##### Deploying from a helm chart
@@ -122,7 +135,7 @@ deploy:
 The stack author may specify the helm chart that could be used to deploy the stack.
 
 ```
-deploy:
+workloads:
   components:
     - description: Deploys the image hello-world
       imageRef : hello-world
@@ -130,9 +143,9 @@ deploy:
         url: https://technosophos.github.io/tscharts/mink-0.1.0.tgz
         values:
           - name: license
-            value: true 
+            value: true
           - name: REPLACE_IMAGE 
-            value: ${imageRef} 
+            value: ${imageRef} # The Helm Chart expects the REPLACE_IMAGE to be set with `hello_world` image.
 ```
 
 ##### Deploying using a list of Kubernetes resources
@@ -141,9 +154,9 @@ The stack author may specify the list of raw Kubernetes objects to be created to
 associated with the stack.
 
 ```
-deploy:
+workloads:
   components:
-    - description
+    - description: "Deploys the springboot app as a Knative Service"
       objects:
         - apiVersion: serving.knative.dev/v1
           kind: Service
@@ -166,15 +179,12 @@ deploy:
 ##### Deploying using a 'yaml' manifest
 
 ```
-deploy:
+workloads:
   dependencies:
     # The node app's service dependencies
     - description: Mongo DB deployment
       manifests: 
         - ${STACK_ROOT}/dependencies/postgres.yaml
-      objects: []
-      workloads: []
-      chart: []
 ```
 
 

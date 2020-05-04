@@ -123,7 +123,7 @@ images:
       - name: ARTIFACT_COPY_ARGS
         value: '*.jar'
 
-deploy:
+workloads:
   components:
     - description: ConfigMap to enable one service connect to another.
       manifests: 
@@ -136,7 +136,7 @@ deploy:
     
     - description: The second backing service
       imageRef: name-service
-      manifests: 
+      manifests:
         - https://raw.githubusercontent.com/sbose78/fuse-springboot-circuit-breaker-booster/app-stak/name-service/deploy/deploy.yaml
 
     
