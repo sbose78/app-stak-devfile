@@ -1,4 +1,4 @@
-### Golang Serverless Stack
+## Golang Serverless Stack
 
 ### Inner loop
 The stack's inner loop guidance lives in https://github.com/sbose78/golang-function/blob/master/devfile.yaml
