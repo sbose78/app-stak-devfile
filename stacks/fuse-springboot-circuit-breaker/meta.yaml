@@ -1,0 +1,5 @@
+---
+displayName: Multi-service Fuse Springboot Stack
+description: Stack for developing multi-service Springboot Apps
+tags: ["Springboot", "Fuse", "Circuitbreaker"]
+repositoryURL: https://github.com/sbose78/fuse-springboot-circuit-breaker-booster
