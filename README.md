@@ -205,3 +205,13 @@ _To Be Added_
 ### Samples
 
 Get started with samples stacks in the `/stacks` directory.
+
+
+### Stack inheritance
+
+A stack could be inherited by 
+1. A stack.
+2. A project.
+
+To accomplish the same, the project/stack's devfile specify the parent stack and 
+the continue to add/overide the relevant stack guidance in the devfile.
