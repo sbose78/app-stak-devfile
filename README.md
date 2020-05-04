@@ -157,6 +157,7 @@ associated with the stack.
 workloads:
   components:
     - description: "Deploys the springboot app as a Knative Service"
+      imageRef : accounts-service-image
       objects:
         - apiVersion: serving.knative.dev/v1
           kind: Service
