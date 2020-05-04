@@ -5,4 +5,4 @@ tags: ["Springboot", "Fuse", "Circuitbreaker"]
 version: 0.0.1
 repository:
   url: https://github.com/sbose78/fuse-springboot-circuit-breaker-booster
-  ref: "3924503"
+  ref: "ab8bd3d"

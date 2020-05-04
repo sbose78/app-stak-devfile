@@ -6,4 +6,4 @@ repositoryURL: https://github.com/sbose78/nodejs-postgresql-stack
 version: 0.0.1
 repository:
   url: https://github.com/sbose78/fuse-springboot-circuit-breaker-booster
-  ref: "4c6df47"
+  ref: "ab8bd3d"
