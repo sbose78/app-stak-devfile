@@ -3,6 +3,11 @@ displayName: Golang Serverless App Stack
 description: Stack for developing a Golang Function
 tags: ["Golang", "Serverless", "Function"]
 version: 0.0.1
-repository:
-  url: https://github.com/sbose78/golang-function
-  ref: "a5d1ff7"
+
+# outer loop information
+deploy:
+  components:
+    - build: 
+        - manifests/Dockerfile
+      deploy: 
+        - manifests/deploy.yaml

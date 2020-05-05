@@ -1,0 +1,39 @@
+schemaVersion: 2.0.0
+metadata:
+  name: nodejs-postgres
+projects:
+  - name: nodejs-sbose78-postgres
+    git:
+      location: https://github.com/sbose78/nodejs-rest-http-crud
+      branch: app-stak
+  - name: nodes-postgres
+    git:
+      location: https://github.com/nodeshift-starters/nodejs-rest-http-crud
+      branch: master
+components:
+  - chePlugin:
+      registryEntry:
+        id: che-incubator/typescript/latest
+  - chePlugin:
+      registryEntry:
+        id: redhat/dependency-analytics/latest
+  - container:
+      name: nodejs
+      image: quay.io/eclipse/che-nodejs10-ubi:nightly
+      memoryLimit: 512Mi
+      endpoints:
+        - name: 'nodejs'
+          port: 3000
+      mountSources: true
+
+commands:
+  - exec:
+      id: build 
+      component: nodejs
+      commandLine: npm install
+      workdir: '${PROJECTS_ROOT}/nodejs-rest-http-crud'
+  - exec:
+      id: build 
+      component: nodejs
+      commandLine: nodemon app.js
+      workdir: '${PROJECTS_ROOT}/nodejs-rest-http-crud'
