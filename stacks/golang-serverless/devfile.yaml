@@ -25,9 +25,11 @@ commands:
       workingDir: '${PROJECTS_ROOT}/go-function'
 
 # outer loop information
-deploy:
-  workloads:
-    - build: 
-        - manifests/Dockerfile
-      deploy: 
-        - manifests/deploy.yaml
+services:
+  - build: 
+      type: 
+        Dockerfile: ${STACK_ROOT}/manifests/Dockerfile
+    deploy:
+      type:
+        apiVersion: serving.knative.dev/v1
+        kind: Service

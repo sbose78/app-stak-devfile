@@ -51,6 +51,8 @@ commands:
 deploy:
   workloads:
     - build: 
-        - build/Dockerfile
+        type:
+            dockerfile: ${STACK_ROOT}/Dockerfile 
       deploy: 
-        - manifests/deploy.yaml
+        manifests:
+          -  ${STACK_ROOT}/manifests/deploy.yaml

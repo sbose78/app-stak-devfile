@@ -39,15 +39,17 @@ commands:
       workdir: '${PROJECTS_ROOT}/nodejs-rest-http-crud'
 
 # outer loop information
-deploy:
-  workloads:
-    - id: service1
-      build: manifests/buildservice1.yaml
-      deploy: 
-        - manifests/config.yaml  #binding
-        - manifests/service1.yaml
-    - id: service2
-      build:
-        - manifests/buildservice2.yaml
-      deploy:
-        - manifests/service2.yaml
+services:
+  - build: 
+      manifests:
+         ${STACK_ROOT}/manifests/buildservice1.yaml
+    deploy: 
+      manifests:
+        -  ${STACK_ROOT}/manifests/config.yaml  #binding
+        -  ${STACK_ROOT}/manifests/service1.yaml
+  - build:
+      manifests:
+        -  ${STACK_ROOT}/manifests/buildservice2.yaml
+    deploy:
+      manifests:
+        -  ${STACK_ROOT}/manifests/service2.yaml

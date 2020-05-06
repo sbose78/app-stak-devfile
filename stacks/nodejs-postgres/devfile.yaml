@@ -39,14 +39,35 @@ commands:
       workdir: '${PROJECTS_ROOT}/nodejs-rest-http-crud'
 
 
-# outer loop information
-deploy:
-  workloads:
-    - id: postgres
-      deploy: 
-        - manifests/postgres.yaml
-    - id: rest-api
-      build:
-        - manifests/s2ibuildtask.yaml
-      deploy:
-        - manifests/deploymentconfig.yaml
+# outer loop.
+services:
+
+  - deploy: 
+      manifests:
+        - ${STACK_ROOT}/manifests/postgres.yaml
+
+  - build:
+      type: # actually an s2i build ;)
+        Dockerfile: '${STACK_ROOT}/build/Dockerfile'
+
+    deploy:
+      manifests: 
+        - ${STACK_ROOT}/manifests/binding-secret.yaml
+      podTemplate:
+        containers:
+          - env:
+              - name: DB_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: my-database-secret
+                    key: user
+              - name: DB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: my-database-secret
+                    key: password
+            readinessProbe:
+              httpGet: ""
+              path: /api/health/readiness
+              port: 8080
+              scheme: HTTP
