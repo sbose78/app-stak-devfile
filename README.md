@@ -8,9 +8,10 @@ An application stack is a set of metadata, artifacts and example code needed to 
 The scope of AppStaK goes beyond the traditional software stack and covers development 
 and GitOps activities.
 
-### Who consumes an application stack ?
+### Who/What consumes an application stack ?
 
-Developer tools which enables developers to get started with writing applications which would be eventually deployed in a Kubernetes environments, would use Application Stacks to offers users a variety of optioins 
+Developer tools which enable developers to develop and 
+deploy apps in a Kubernetes environment.
 
 ### What information does a stack have ?
 
