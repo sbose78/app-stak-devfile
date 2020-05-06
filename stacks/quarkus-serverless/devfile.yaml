@@ -5,7 +5,7 @@ projects:
   - name: quarkus-serverless
     git:
       location: https://github.com/sbose78/getting-started-knative
-components:
+workloads:
   - chePlugin:
       registryEntry:
         id: redhat/java11/latest
@@ -46,3 +46,11 @@ commands:
         component: maven
         command: "mvn clean install"
         workdir: ${PROJECTS_ROOT}
+
+# outer loop information
+deploy:
+  workloads:
+    - build: 
+        - build/Dockerfile
+      deploy: 
+        - manifests/deploy.yaml

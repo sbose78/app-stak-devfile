@@ -38,16 +38,15 @@ commands:
       commandLine: nodemon app.js
       workdir: '${PROJECTS_ROOT}/nodejs-rest-http-crud'
 
+
 # outer loop information
 deploy:
   workloads:
-    - id: service1
-      build: manifests/buildservice1.yaml
+    - id: postgres
       deploy: 
-        - manifests/config.yaml  #binding
-        - manifests/service1.yaml
-    - id: service2
+        - manifests/postgres.yaml
+    - id: rest-api
       build:
-        - manifests/buildservice2.yaml
+        - manifests/s2ibuildtask.yaml
       deploy:
-        - manifests/service2.yaml
+        - manifests/deploymentconfig.yaml

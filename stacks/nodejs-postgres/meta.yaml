@@ -4,13 +4,3 @@ description: Stack for developing NodeJS CRUD Web Applications
 tags: ["NodeJS", "PostgreSQL", "Alpine"]
 repositoryURL: https://github.com/sbose78/nodejs-postgresql-stack
 version: 0.0.1
-
-# outer loop information
-deploy:
-  components:
-    - deploy: 
-        - manifests/postgres.yaml
-    - build:
-        - manifests/s2ibuildtask.yaml
-      deploy:
-        - manifests/deploymentconfig.yaml
