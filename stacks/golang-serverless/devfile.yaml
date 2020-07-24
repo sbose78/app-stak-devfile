@@ -28,7 +28,7 @@ commands:
 services:
   - build: 
       type: 
-        Dockerfile: ${STACK_ROOT}/manifests/Dockerfile
+        Dockerfile: manifests/Dockerfile
     deploy:
       type:
         apiVersion: serving.knative.dev/v1
