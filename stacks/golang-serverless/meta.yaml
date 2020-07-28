@@ -1,0 +1,5 @@
+---
+displayName: Golang Serverless App Stack
+description: Stack for developing a Golang Function
+tags: ["Golang", "Serverless", "Function"]
+version: 0.0.1

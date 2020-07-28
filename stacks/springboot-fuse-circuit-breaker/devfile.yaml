@@ -1,0 +1,55 @@
+schemaVersion: 2.0.0
+metadata:
+  name: nodejs-postgres
+projects:
+  - name: nodejs-sbose78-postgres
+    git:
+      location: https://github.com/sbose78/nodejs-rest-http-crud
+      branch: app-stak
+  - name: nodes-postgres
+    git:
+      location: https://github.com/nodeshift-starters/nodejs-rest-http-crud
+      branch: master
+workloads:
+  - chePlugin:
+      registryEntry:
+        id: che-incubator/typescript/latest
+  - chePlugin:
+      registryEntry:
+        id: redhat/dependency-analytics/latest
+  - container:
+      name: nodejs
+      image: quay.io/eclipse/che-nodejs10-ubi:nightly
+      memoryLimit: 512Mi
+      endpoints:
+        - name: 'nodejs'
+          port: 3000
+      mountSources: true
+
+commands:
+  - exec:
+      id: build 
+      component: nodejs
+      commandLine: npm install
+      workdir: '${PROJECTS_ROOT}/nodejs-rest-http-crud'
+  - exec:
+      id: build 
+      component: nodejs
+      commandLine: nodemon app.js
+      workdir: '${PROJECTS_ROOT}/nodejs-rest-http-crud'
+
+# outer loop information
+services:
+  - build: 
+      manifests:
+         ${STACK_ROOT}/manifests/buildservice1.yaml
+    deploy: 
+      manifests:
+        -  ${STACK_ROOT}/manifests/config.yaml  #binding
+        -  ${STACK_ROOT}/manifests/service1.yaml
+  - build:
+      manifests:
+        -  ${STACK_ROOT}/manifests/buildservice2.yaml
+    deploy:
+      manifests:
+        -  ${STACK_ROOT}/manifests/service2.yaml

@@ -1,0 +1,35 @@
+schemaVersion: 2.0.0
+metadata:
+  name: golang-serverless
+projects:
+  - name: go-function
+    git:
+      location: https://github.com/sbose78/go-function
+      branch: master
+workloads:
+  - chePlugin:
+      registryEntry:
+        id: ms-vscode/go/latest
+  - chePlugin:
+      registryEntry:
+        id: redhat/dependency-analytics/latest
+  - container:
+      name: maven
+      image: quay.io/eclipse/che-golang-1.12:nightly  
+
+commands:
+  - exec:
+      id: build 
+      component: maven
+      commandLine: CGO_ENABLED=0 GOOS=linux go build -mod=readonly -v -o server
+      workingDir: '${PROJECTS_ROOT}/go-function'
+
+# outer loop information
+services:
+  - build: 
+      type: 
+        Dockerfile: manifests/Dockerfile
+    deploy:
+      type:
+        apiVersion: serving.knative.dev/v1
+        kind: Service

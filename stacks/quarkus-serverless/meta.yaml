@@ -1,0 +1,5 @@
+---
+displayName: Quarkus Serverless App Stack
+description: Stack for developing Quarkus Function
+tags: ["Quarkus", "Serverless", "Function"]
+version: 0.0.1

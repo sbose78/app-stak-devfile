@@ -1,10 +1,19 @@
-### What is a stack ?
+## Application Stacks 
+codenamed "AppStaks"
 
-Set of metadata, artifacts and example code needed to develop an application. 
+
+### What is an application stack ?
+
+An application stack is a set of metadata, artifacts and example code needed to develop an application. 
 The scope of AppStaK goes beyond the traditional software stack and covers development 
 and GitOps activities.
 
-#### What information does a stack have ?
+### Who/What consumes an application stack ?
+
+Developer tools which enable developers to develop and 
+deploy apps in a Kubernetes environment.
+
+### What information does a stack have ?
 
 A stack contains the following information with respect to an application 
 that is associated with a stack:
@@ -17,63 +26,77 @@ that is associated with a stack:
 * How to deploy the application. For example, a Knative Service using a specific pod template
 * Sample CI/CD Pipeline(s)
 
+### Build guidance
 
-#### How does one define a stack ?
+The stack author could choose to provide either:
+1. The kubernetes manifest that builds an image : it should most likely be a Task definition, Or
+2. The Build Strategy to be used to build an image.
 
-A stack author defines a stack by specifying the aforementioned metadata in a manifest called 
-a Devfile.
+### Deployment Guidance
 
+The stack author could choose to provide different levels of guidance.
 
-### Contents of a stack's Devfile
+1. The apiVersion and kind.
+2. The Pod template.
+3. The Helm Chart. 
+4. The Parameterized list of kubernetes objects ( `oc process -f ...` ).
+5. The list of manifests ( `kubectl apply -f ...` ).
 
-#### Sample application(s)
-
-```
-projects:
-  - name: spring-boot-http-booster
-    git:
-      location: https://github.com/snowdrop/spring-boot-http-booster
-      branch: master
-```
-
-#### Guidance on compiling the application
+### Example
 
 ```
-commands:
-  - exec:
-      id: build 
-      component: maven
-      commandLine: mvn -Duser.home=${HOME} -DskipTests clean install
-      workingDir: '${PROJECTS_ROOT}/spring-boot-http-booster'
-      env:
-        - name: MAVEN_OPTS
-          value: "-Xmx200m"
+# outer loop.
+services:
+  - deploy:
+      manifests:
+        - ${STACK_ROOT}/manifests/postgres.yaml
+
+  - build:
+      type: 
+        Dockerfile: '${STACK_ROOT}/build/Dockerfile
+
+    deploy:
+      type:
+        apiVersion: serving.knative.dev/v1
+        kind: Service
+
+      #### option 2
+      podTemplate:
+        containers:
+            readinessProbe:
+              httpGet: ""
+              path: /api/health/readiness
+              port: 8080
+              scheme: HTTP
+
+      #### option 3
+      helm:
+        chart: https://redhat-developer.github.com/redhat-helm-charts/charts/nodejs-ex-k-0.1.1.tgz
+
+      #### option 4
+      objects:
+        - apiVersion: serving.knative.dev/v1alpha1
+          kind: Service
+          metadata:
+          name: greeter
+          spec:
+            template:
+              spec:
+                containers:
+                  - image: dev.local/quarkus-quickstarts/getting-started-knative
+                    livenessProbe:
+                    httpGet:
+                        path: /health/live
+                    readinessProbe:
+                    httpGet:
+                        path: /health/ready
+
+
+      #### option 5  
+      manifests: 
+        - ${STACK_ROOT}/manifests/binding-secret.yaml
+
+    
+
+    
 ```
-
-#### Guidance on runnning the application
-
-```
-commands:
-  - exec:
-        id: run
-        component: maven
-        commandLine: 'mvn -Duser.home=${HOME} spring-boot:run'
-        workingDir: '${PROJECTS_ROOT}/spring-boot-http-booster'
-        env:
-          - name: MAVEN_OPTS
-            value: "-Xmx200m"
-```
-
-
-#### Guidance on building an image
-
-_To Be Added_
-
-   
-#### Guidance on deploying the image
-
-_To Be Added_
-
-#### Guidance on a CI/CD pipeline
-
-_To Be Added_
